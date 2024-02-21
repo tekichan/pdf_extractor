@@ -11,7 +11,17 @@ There are two versions of the program. One is Python and one is Java. Please go 
 pip install -r requirements.txt
 ```
 
-3. Install nltk popular data
+If there is any problem using the given `requirements.txt`, you can install each indidvidual library.
+
+```bash
+pip install pypdf
+pip install pandas
+pip install openpyxl
+pip install pyarrow
+pip install --user -U nltk
+```
+
+3. Install nltk popular data. For details, see [https://www.nltk.org/data.html](https://www.nltk.org/data.html)
 
 ```bash
 python -m nltk.downloader popular
@@ -41,6 +51,18 @@ python pdf_extractor.py extract -p ./pdf_dir -e default_extracted.txt
 
 ```bash
 python pdf_extractor.py filter -e default_extracted.txt -f default_filtered.txt -a some_name
+```
+
+- Run filtering of the defaultextracted file `default_extracted.txt` for the author names `some_name_a` or `some_name_b` and save in `default_filtered.txt`
+
+```bash
+python pdf_extractor.py filter -e default_extracted.txt -f default_filtered.txt -a some_name_a,some_name_b -op or
+```
+
+- Run filtering of the defaultextracted file `default_extracted.txt` for the author names `some_name_a` in year `2010` and `some_name_b` and save in `default_filtered.txt`
+
+```bash
+python pdf_extractor.py filter -e default_extracted.txt -f default_filtered.txt -a some_name_a-2010,some_name_b -op and
 ```
 
 - Run word count of the filtered file `default_filtered.txt`, excluding words in `default_exclude.txt` and save in `default_output.xlsx`

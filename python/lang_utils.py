@@ -73,33 +73,54 @@ def get_path_tokens(pdf_path_list):
         path_tokens_dict[file_name] = new_text_tokens
     return path_tokens_dict
 
-def is_citation(text_pair_line):
+def is_citation(text_line, regex_ptns=[]):
     """
     Whether the given sentence is citation
     """
-    text_line = text_pair_line[1]
-    searched_p1 = re.search('[\w\.,]+\s*\(\d{4}\)', text_line)
-    searched_p2 = re.search('\([\w\.\s]+.*\d{4}\)', text_line)
-    return True if searched_p1 or searched_p2 else False
-
-def has_names(text_line, names):
-    """
-    Whether the given sentence has the given list of names
-    """
-    name_list = names.split(',')
-    for name in name_list:
-        if re.search(name, text_line, re.IGNORECASE):
+    for regex_ptn in regex_ptns:
+        if re.search(regex_ptn, text_line.lower()):
             return True
+
     return False
 
-def filter_citation(text_pair_list, authors=None):
+def is_citation_named(text_line, unamed_ptn_list, ptn_list):
+    for unamed_ptn in unamed_ptn_list:
+        matched = re.search(unamed_ptn, text_line)
+        if matched:
+            is_matched = is_citation(matched.group(), ptn_list)
+            if is_matched:
+                return True
+    return False       
+
+def is_named_citation(text_line, author_list, unamed_ptn_list, named_ptn_list, named_year_ptn_list, operator='or'):
+    """
+    Whether the given sentence is citation with given names
+    """    
+    for author in author_list:
+        if '-' in author:
+            [author_name, year] = author.split('-', 1)
+            ptn_list = [ named_year_ptn.replace('$name', author_name).replace('$year', year) for named_year_ptn in named_year_ptn_list ]
+        else:
+            ptn_list = [ named_ptn.replace('$name', author) for named_ptn in named_ptn_list ]
+        is_matched = is_citation_named(text_line, unamed_ptn_list, ptn_list)              
+        if operator == 'or' and is_matched:
+            return True
+        elif operator == 'and' and not is_matched:
+            return False        
+    return False if operator == 'or' else True
+
+def filter_citation(text_pair_list, authors=None, operator="or",
+                    unamed_ptn_list=[], named_ptn_list=[], named_year_ptn_list=[]):
     """
     Filter citation
     """
-    filtered_pair = filter(is_citation, text_pair_list)
-    if authors:
-        filtered_pair = filter(lambda line_pair: has_names(line_pair[1], authors), filtered_pair)
-    return filtered_pair
+    # Unamed Pattern
+    filtered_pair = filter(lambda text_pair: is_citation(text_pair[1], unamed_ptn_list), text_pair_list)
+    if authors is not None:
+        author_list = [author for author in authors.lower().split(',')]
+        filtered_pair_list = list(filtered_pair)
+        filtered_pair = filter(lambda text_pair: is_named_citation(text_pair[1], author_list, unamed_ptn_list, named_ptn_list, named_year_ptn_list, operator), filtered_pair_list)
+    return list(filtered_pair)
 
 def split_digits(word_tokens):
     new_word_list = list()

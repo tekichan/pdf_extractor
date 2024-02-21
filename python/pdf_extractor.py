@@ -14,7 +14,16 @@ if __name__ == '__main__':
     """
     Main program starts
     """
-    parser = arg_utils.create_parser()
+    config_dict = file_utils.read_json('config.json')
+    parser = arg_utils.create_parser(
+                default_extract=config_dict['default_extract']
+                , default_filter=config_dict['default_filter']
+                , default_operator=config_dict['default_operator']
+                , default_exclude=config_dict['default_exclude']
+                , default_out=config_dict['default_out']
+                , default_corrrate=str(config_dict['default_corrrate'])
+                , default_analysis=config_dict['default_analysis']
+                )
     args = parser.parse_args()
 
     if args.stage in ['all', 'extract']:
@@ -40,7 +49,8 @@ if __name__ == '__main__':
             sys.exit(-1)
         
         text_pair_list = file_utils.read_text_file(args.ext)
-        filtered_pair = lang_utils.filter_citation(text_pair_list, args.authors)
+        filtered_pair = lang_utils.filter_citation(text_pair_list, args.authors, args.operator,
+                                                   config_dict['unnamed_patterns'], config_dict['named_patterns'], config_dict['named_year_patterns'])
 
         # Save the pair into a text file
         file_utils.write_output_filter(filtered_pair, args.filter)
