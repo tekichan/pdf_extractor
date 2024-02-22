@@ -92,15 +92,15 @@ if __name__ == '__main__':
         
         output_df = stat_utils.read_output(args.out)
         # Get file column list
-        pdf_file_list = list(output_df.columns)
+        pdf_file_list = [column for column in list(output_df.columns) if column not in ['syllables', 'file_count', 'occurrence']]
         # Read File of File-Text
         text_pair_list = file_utils.read_text_file(args.filter)
         # Pair analysis
         paired_df = stat_utils.analyse_pair(output_df, pdf_file_list, float(args.corrrate), text_pair_list)
         stat_utils.write_excel_paired_analysis(paired_df, args.analysis)
         if args.stage == 'analyse':
-            print('Statatics of {s} is saved in {d} completely.'.format(s=args.out, d=args.analysis))
+            print('Analysis of {s} is saved in {d} completely.'.format(s=args.out, d=args.analysis))
         else:
             # Final output message
-            print('All processes done. Statatics of {s} is saved {o} and {d} completely.'.format(s=args.pdf, o=args.out, d=args.analysis))
+            print('All processes done. Analysis of {s} is saved {o} and {d} completely.'.format(s=args.pdf, o=args.out, d=args.analysis))
     

@@ -141,6 +141,9 @@ def merge_hyphen_words(word_tokens):
         idx += 1
     return new_word_list
 
+def cleanse_words(word_list):
+    return [ re.sub('[^-\w]+', '', word) for word in word_list ]
+
 def get_file_tokens(text_pair_list, exclude_list):
     file_tokens_dict = dict()
     for text_pair in text_pair_list:
