@@ -29,11 +29,15 @@ python -m nltk.downloader popular
 
 4. Run the program
 
+## Show Help 
+
 - See help page
 
 ```bash
 python pdf_extractor.py -h
 ```
+
+## All stages
 
 - Run all stages for PDF files in `./pdf_dir/`
 
@@ -41,11 +45,15 @@ python pdf_extractor.py -h
 python pdf_extractor.py all -p ./pdf_dir
 ```
 
+## Extract PDF text
+
 - Run extraction of PDF files in `./pdf_dir/` and save in `default_extracted.txt`
 
 ```bash
 python pdf_extractor.py extract -p ./pdf_dir -e default_extracted.txt
 ```
+
+## Filter the extracted text
 
 - Run filtering of the extracted file `default_extracted.txt` for the author name `some_name` and save in `default_filtered.txt`
 
@@ -65,11 +73,15 @@ python pdf_extractor.py filter -e default_extracted.txt -f default_filtered.txt 
 python pdf_extractor.py filter -e default_extracted.txt -f default_filtered.txt -a some_name_a-2010,some_name_b -op and
 ```
 
+## Count words from the filtered text
+
 - Run word count of the filtered file `default_filtered.txt`, excluding words in `default_exclude.txt` and save in `default_output.xlsx`
 
 ```bash
 python pdf_extractor.py count -f default_filtered.txt -x default_exclude.txt -o default_output.xlsx
 ```
+
+## Analyze word occurrence
 
 - Run analysis of the output file `default_output.xlsx` to target pairs of words with higher than 0.5 correlation and save in `default_analysis.xlsx`
 
