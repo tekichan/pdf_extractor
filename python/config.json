@@ -5,7 +5,7 @@
     , "default_out": "default_output.xlsx"
     , "default_corrrate": 0.5
     , "default_analysis": "default_analysis.xlsx"
-    , "default_operator": "or"
+    , "default_operator": "and"
     , "unnamed_patterns": [
         "[\\w\\.,\\s]+\\s*\\(\\d{4}.*\\)"
         , "\\([\\w;,\\.\\s]+.*\\d{4};*.*\\)"
