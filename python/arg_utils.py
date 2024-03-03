@@ -30,7 +30,7 @@ def create_parser(
     parser.add_argument('-c', '--corrrate', default=default_corrrate)
     parser.add_argument('-o', '--out', default=default_out)
     parser.add_argument('-l', '--analysis', default=default_analysis)
-    parser.add_argument('-op', '--operator', default=default_operator)
+    parser.add_argument('-op', '--operator', default=default_operator, choices=['and', 'or'])
     return parser
 
 def usage(parser):

@@ -41,18 +41,18 @@ def massage_tokens(text_tokens):
         if not current_text:
             # skip empty line
             pass
-        elif idx > 0 and not re.match('\w', current_text[0]):
+        elif idx > 0 and not re.match(r'\w', current_text[0]):
             # merge previous if not starting with word
             new_text_tokens[-1] = new_text_tokens[-1] + ' ' + current_text
         elif idx > 0 and not is_balanced(new_text_tokens[-1]) and not is_balanced(current_text):
             # merged previous if brackets not balanced
             new_text_tokens[-1] = new_text_tokens[-1] + ' ' + current_text
-        elif idx > 0 and re.match('^\d+\s*\.$', new_text_tokens[-1]):
+        elif idx > 0 and re.match(r'^\d+\s*\.$', new_text_tokens[-1]):
              # previous numbered points
              new_text_tokens[-1] = new_text_tokens[-1] + ' ' + current_text
-        elif re.search(':\s*\d+\s*\.', current_text):
+        elif re.search(r':\s*\d+\s*\.', current_text):
             # numbered point before colon
-            searched = re.search(':\s*\d+\s*\.', current_text)
+            searched = re.search(r':\s*\d+\s*\.', current_text)
             new_text_tokens.append(current_text[:searched.start() + 1].strip())
             new_text_tokens.append(current_text[searched.start() + 1:].strip())
         else:
@@ -125,7 +125,7 @@ def filter_citation(text_pair_list, authors=None, operator="or",
 def split_digits(word_tokens):
     new_word_list = list()
     for word in word_tokens:
-        new_word_list.extend(re.split('(\d+)',word))
+        new_word_list.extend(re.split(r'(\d+)',word))
     return new_word_list
 
 def merge_hyphen_words(word_tokens):
@@ -142,7 +142,7 @@ def merge_hyphen_words(word_tokens):
     return new_word_list
 
 def cleanse_words(word_list):
-    return [ re.sub('[^-\w]+', '', word) for word in word_list ]
+    return [ re.sub(r'[^-\w]+', '', word) for word in word_list ]
 
 def get_file_tokens(text_pair_list, exclude_list):
     file_tokens_dict = dict()
@@ -152,7 +152,7 @@ def get_file_tokens(text_pair_list, exclude_list):
         all_word_tokens = file_tokens_dict.get(filename, list())
         word_list = split_digits(word_tokenize(sentence))
         word_list = merge_hyphen_words(word_list)
-        all_word_tokens.extend([word.lower() for word in word_list if re.search('[a-z]{2,}', word.lower()) and word.lower() not in exclude_list ])
+        all_word_tokens.extend([re.sub(r'\W', '', word.lower()) for word in word_list if re.search(r'[a-z]{2,}', word.lower()) and word.lower() not in exclude_list ])
         file_tokens_dict[filename] = all_word_tokens
     return file_tokens_dict
 

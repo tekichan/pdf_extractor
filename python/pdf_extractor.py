@@ -54,6 +54,7 @@ if __name__ == '__main__':
 
         # Save the pair into a text file
         file_utils.write_output_filter(filtered_pair, args.filter)
+        stat_utils.write_excel_filter_summary(filtered_pair, config_dict['unnamed_patterns'], config_dict['default_filter_summary'])
         if args.stage == 'filter':
             print('Filtering text from {s} to {d} was complete.'.format(s=args.ext, d=args.filter))
             sys.exit(0)
@@ -97,7 +98,11 @@ if __name__ == '__main__':
         text_pair_list = file_utils.read_text_file(args.filter)
         # Pair analysis
         paired_df = stat_utils.analyse_pair(output_df, pdf_file_list, float(args.corrrate), text_pair_list)
-        stat_utils.write_excel_paired_analysis(paired_df, args.analysis)
+        # Count non-zero columns
+        paired_df['file_count'] = (paired_df[pdf_file_list] > 0).sum(axis=1)
+        # Total occurrence
+        paired_df['occurrence'] = paired_df[pdf_file_list].sum(axis=1)        
+        stat_utils.write_excel_paired_analysis(paired_df, args.analysis, ['word_1', 'word_2', 'correlation', 'file_count', 'occurrence'], pdf_file_list)
         if args.stage == 'analyse':
             print('Analysis of {s} is saved in {d} completely.'.format(s=args.out, d=args.analysis))
         else:

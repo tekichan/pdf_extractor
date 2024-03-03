@@ -1,21 +1,22 @@
 {
     "default_extract": "default_extracted.txt"
     , "default_filter": "default_filtered.txt"
+    , "default_filter_summary": "default_filtered_summary.xlsx"
     , "default_exclude": "default_exclude.txt"
     , "default_out": "default_output.xlsx"
     , "default_corrrate": 0.5
     , "default_analysis": "default_analysis.xlsx"
     , "default_operator": "and"
     , "unnamed_patterns": [
-        "[\\w\\.,\\s]+\\s*\\(\\d{4}.*\\)"
-        , "\\([\\w;,\\.\\s]+.*\\d{4};*.*\\)"
+        "[\\w\\.,\\s]+\\s*\\(\\d{4}[\\w\\.,;\\s]*\\)"
+        , "\\([\\w;,\\.\\s]+.*\\d{4}[\\w\\.,;\\s]*\\)"
     ]
     , "named_patterns": [
-        "($name[\\W+][\\w\\.,\\s]+|$name)\\s*\\(\\d{4}.*\\)",
-        "\\([\\w;,\\.\\s]*$name[\\W]+[\\w;,\\.\\s]*\\d{4};*.*\\)"
+        "($name[\\W+][\\w\\.,\\s]+|$name)\\s*\\(\\d{4}[\\w\\.,;\\s]*\\)",
+        "\\([\\w;,\\.\\s]*$name[\\W]+[\\w;,\\.\\s]*\\d{4}[\\w\\.,;\\s]*\\)"
     ]
     , "named_year_patterns": [
-        "($name[\\W+][\\w\\.,\\s]+|$name)\\s*\\($year.*\\)",
-        "\\([\\w;,\\.\\s]*$name[\\W]+[\\w;,\\.\\s]*$year;*.*\\)"
+        "($name[\\W+][\\w\\.,\\s]+|$name)\\s*\\($year[\\w\\.,;\\s]*\\)",
+        "\\([\\w;,\\.\\s]*$name[\\W]+[\\w;,\\.\\s]*$year[\\w\\.,;\\s]*\\)"
     ]    
 }

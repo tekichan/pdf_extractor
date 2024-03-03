@@ -40,8 +40,8 @@ def analyse_pair(df, pdf_file_list, min_corr_rate, text_pair_list):
     # Filter those 
     word_pair_list = list()
     for comb in word_pair_set:
-        comb_re1 = comb[0] + '[\s,-]*' + comb[1]
-        comb_re2 = comb[1] + '[\s,-]*' + comb[0]
+        comb_re1 = str(comb[0]) + r'[\s,-]*' + str(comb[1])
+        comb_re2 = str(comb[1]) + r'[\s,-]*' + str(comb[0])
         for text_pair in text_pair_list:
             if re.search(comb_re1, text_pair[1]) or \
                 re.search(comb_re2, text_pair[1]):
@@ -58,8 +58,8 @@ def analyse_pair(df, pdf_file_list, min_corr_rate, text_pair_list):
                 , 'word_2': comb[1]
                 , 'correlation': corr_rate
             }
-            comb_re1 = comb[0] + '[\s,-]*' + comb[1]
-            comb_re2 = comb[1] + '[\s,-]*' + comb[0]
+            comb_re1 = str(comb[0]) + r'[\s,-]*' + str(comb[1])
+            comb_re2 = str(comb[1]) + r'[\s,-]*' + str(comb[0])
             file_occurrence_dict = dict()
             for text_pair in text_pair_list:
                 file_name = text_pair[0]
@@ -74,6 +74,34 @@ def write_excel_word_counts(df, output_path, word_counts_columns, file_list):
     with pd.ExcelWriter(output_path) as writer:
         df.to_excel(writer, sheet_name='word_counts', index=True, columns=word_counts_columns+file_list)
 
-def write_excel_paired_analysis(df, output_path):
+def write_excel_paired_analysis(df, output_path, paired_analysis_columns, file_list):
     with pd.ExcelWriter(output_path) as writer:
-        df.to_excel(writer, sheet_name='pair_analysis', index=False)    
+        df.to_excel(writer, sheet_name='pair_analysis', index=False, columns=paired_analysis_columns+file_list)
+
+def write_excel_filter_summary(text_pair_list, patterns, output_path):
+    filtered_pair_list = text_pair_list.copy()
+    result_list = []
+    for line_pair in filtered_pair_list:
+        citations = 0
+        for pattern in patterns:
+            matches = re.findall(pattern, line_pair[1])
+            for match in matches:
+                m1 = re.sub(r',|and', ';', match)
+                citations += len(
+                    [n for n in re.split(r';', m1) 
+                     if n is not None and len(n.strip()) > 0 and
+                        not n.strip().startswith('e.g.') and not n.strip().endswith('e.g.')
+                    ])
+        result_list.append({
+            'filename': line_pair[0],
+            'citations': citations,
+            'sentence': line_pair[1]
+        })
+    df = pd.DataFrame(result_list)
+    df_sum = df.groupby('filename').agg(
+        {'citations': 'sum', 'sentence': 'size'}
+    ).reset_index()
+    with pd.ExcelWriter(output_path) as writer:
+        df.to_excel(writer, sheet_name='citations', index=False)
+        df_sum.to_excel(writer, sheet_name='summary', index=False)
+    
