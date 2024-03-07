@@ -3,10 +3,19 @@ PDF Extractor Main Program
 @author     Teki Chan
 @since      30 Jan 2024
 """
+# Define logging
+import os
+import logging
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'WARNING').upper()
+if logging.getLogger().hasHandlers():
+    logging.getLogger().setLevel(logging.getLevelName(LOG_LEVEL))
+else:
+    logging.basicConfig(level=logging.getLevelName(LOG_LEVEL))
+
+# Import essential libraries
 import arg_utils
 import file_utils
 import lang_utils
-import os
 import stat_utils
 import sys
 

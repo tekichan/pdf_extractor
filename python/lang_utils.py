@@ -10,6 +10,7 @@ import os
 import re
 from pypdf import PdfReader
 from string import printable
+import logging
 
 def get_text_tokens(pdf_reader):
     """
@@ -66,11 +67,14 @@ def get_path_tokens(pdf_path_list):
     """
     path_tokens_dict = dict()
     for pdf_path in pdf_path_list:
-        reader = PdfReader(pdf_path)
-        text_tokens = get_text_tokens(reader)
-        new_text_tokens = massage_tokens(text_tokens)
-        file_name = os.path.basename(pdf_path)
-        path_tokens_dict[file_name] = new_text_tokens
+        try:
+            reader = PdfReader(pdf_path)
+            text_tokens = get_text_tokens(reader)
+            new_text_tokens = massage_tokens(text_tokens)
+            file_name = os.path.basename(pdf_path)
+            path_tokens_dict[file_name] = new_text_tokens
+        except:
+            logging.exception('Failed to read PDF {pp}'.format(pp=pdf_path))
     return path_tokens_dict
 
 def is_citation(text_line, regex_ptns=[]):
